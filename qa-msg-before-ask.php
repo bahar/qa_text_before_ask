@@ -10,17 +10,37 @@ class qa_msg_before_ask {
         return ($region == 'main');
     }
 
+    function option_default($option) {
+	    switch($option) {
+            case 'msg_before_ask_label':
+                return 'thanks, I will keep these tips in mind when asking';
+            case 'msg_before_ask_proceed':
+                return 'proceed';
+            default:
+                return null;				
+	    }
+    }
+
     function admin_form(&$qa_content) {
         $ok = null;
 
         if (qa_clicked('pre_msg_save_button')) {
+            qa_opt('enable_msg_before_ask', (bool) qa_post_text('enable_msg_before_ask'));
             qa_opt('msg_before_ask', qa_post_text('msg_before_ask'));
             qa_opt('msg_before_ask_css', qa_post_text('msg_before_ask_css'));
-            qa_opt('disable_msg_before_ask', (bool) qa_post_text('disable_msg_before_ask'));
+            qa_opt('msg_before_ask_proceed', qa_post_text('msg_before_ask_proceed'));
+            qa_opt('msg_before_ask_label', qa_post_text('msg_before_ask_label'));
             $ok = qa_lang('admin/options_saved');
         }
 
         $fields = array();
+
+        $fields[] = array(
+            'label' => 'Enable showing message before asking questions',
+            'value' => qa_opt('enable_msg_before_ask'),
+            'tags' => 'NAME="enable_msg_before_ask"',
+            'type' => 'checkbox',
+        );
 
         $fields[] = array(
             'label' => 'Custom CSS for the message',
@@ -38,11 +58,16 @@ class qa_msg_before_ask {
             'rows' => '25',
             'note' => 'Example Message: <a href="http://googlewebmastercentral.blogspot.com/2010/09/tips-for-getting-help-with-your-site.html" target="_blank">Google tips for getting help</a',
         );
+
         $fields[] = array(
-            'label' => 'Disable showing message before asking questions:',
-            'value' => qa_opt('disable_msg_before_ask'),
-            'tags' => 'NAME="disable_msg_before_ask"',
-            'type' => 'checkbox',
+            'label' => 'checkbox label',
+            'value' => qa_html(qa_opt('msg_before_ask_label')),
+            'tags' => 'NAME="msg_before_ask_label"',
+        );
+        $fields[] = array(
+            'label' => 'proceed text',
+            'value' => qa_html(qa_opt('msg_before_ask_proceed')),
+            'tags' => 'NAME="msg_before_ask_proceed"',
         );
 
 
